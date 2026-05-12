@@ -7,10 +7,13 @@ def svd(m, dim):
     _, vec1 = eig(m @ m_t)
 
     out = np.zeros(m.shape)
-    for i in dim:
-        out += vec1[i] * sigma[i] * np.transpose(vec2[i])
+    for i in range(dim):
+        out += np.transpose(vec1[i]) @ vec2[i] * (sigma[i] ** 0.5)
     return out
 
     return vec1[:dim], sigma[:dim], vec2[:dim]
 
 
+test = np.matrix([[35, 23], [58, 92], [28, 64]])
+print(svd(test, 1))
+print(np.linalg.svd(test))
