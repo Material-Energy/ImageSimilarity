@@ -31,23 +31,35 @@ def svdColored(img, dim):
     return rgbToImg(r, g, b).astype(np.uint8)
 
 def get_norm(svd):
+
+    return (norm_r + norm_g + norm_b) / 3
+
+def get_norm_r(svd):
     size = svd.shape[0] * svd.shape[1]
     norm_r = np.linalg.matrix_norm(svd[:,:,0]) / size
+    return norm_r
+
+def get_norm_g(svd):
+    size = svd.shape[0] * svd.shape[1]
     norm_g = np.linalg.matrix_norm(svd[:,:,1]) / size
+    return norm_g
+
+def get_norm_b(svd):
+    size = svd.shape[0] * svd.shape[1]
     norm_b = np.linalg.matrix_norm(svd[:,:,2]) / size
-
-    return math.sqrt(norm_r ** 2 + norm_g ** 2 + norm_b ** 2)
-
+    return norm_b
 
 # print(u @ np.diag(e) @ v_t)
 
 img_og = iio.imread("orange_og.png")
 img_og_svd = svdColored(img_og, 2)
 
-iio.imwrite("out2.png", img_og_svd)
+iio.imwrite("out_og.png", img_og_svd)
 
 img_1 = iio.imread("orange1.png")
 img_1_svd = svdColored(img_1, 2)
+
+iio.imwrite("out_1.png", img_1_svd)
 
 img_apple = iio.imread("apple.png")
 img_apple_svd = svdColored(img_apple, 2)
