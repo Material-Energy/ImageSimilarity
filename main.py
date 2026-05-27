@@ -74,17 +74,51 @@ def get_norm_b(svd):
 # print(norm_img_1 - norm_og)
 # print(norm_img_apple - norm_og)
 
+def img_to_vector(img):
+    matrix = np.array(img)
+    out = []
+    for x in range(matrix.shape[0]):
+        for y in range(matrix.shape[1]):
+            out.append(matrix[x][y])
+    return np.array(out)
+
 
 def import_img(src):
     img = Image.open(src)
     return ImageOps.grayscale(img)
 
 def resize(img):
-    return img.resize((64, 64), Image.BILINEAR)
+    return img.resize((512, 512), Image.BILINEAR)
+
+def cosine(vec_1, vec_2):
+    return (np.dot(vec_1, vec_2)) / (np.sqrt(vec_1.dot(vec_1)) * np.sqrt(vec_2.dot(vec_2)))
+
+
+orange_og = import_img("orange_og.png")
+orange_og = resize(orange_og)
+iio.imwrite("out_og.png", np.array(orange_og).astype(np.uint8))
+vec_og = img_to_vector(orange_og)
+
+orange1 = import_img("orange1.png")
+orange1 = resize(orange1)
+iio.imwrite("out_1.png", np.array(orange1).astype(np.uint8))
+vec_orange = img_to_vector(orange1)
+
+apple = import_img("apple.png")
+apple = resize(apple)
+iio.imwrite("out_apple.png", np.array(apple).astype(np.uint8))
+vec_apple = img_to_vector(apple)
+
+print("Cosine of orange and tangerine: ")
+print(cosine(vec_og, vec_orange))
+
+print("Cosine of orange and apple: ")
+print(cosine(vec_og, vec_apple))
+
 
 ex_1 = import_img("example_1.png")
 
-r_row = np.array( # 3 x 4
+r_row = np.array( # 3 x 4 
     [[0.83, 0.17, 0, 0],
     [0, 0.5, 0.5, 0],
     [0, 0, 0.17, 0.83]]
