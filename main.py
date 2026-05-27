@@ -94,17 +94,17 @@ def cosine(vec_1, vec_2):
     return (np.dot(vec_1, vec_2)) / (np.sqrt(vec_1.dot(vec_1)) * np.sqrt(vec_2.dot(vec_2)))
 
 
-orange_og = import_img("orange_og.png")
+orange_og = import_img("photos/orange.png")
 orange_og = resize(orange_og)
 iio.imwrite("out_og.png", np.array(orange_og).astype(np.uint8))
 vec_og = img_to_vector(orange_og)
 
-orange1 = import_img("orange1.png")
+orange1 = import_img("photos/tangerine.png")
 orange1 = resize(orange1)
 iio.imwrite("out_1.png", np.array(orange1).astype(np.uint8))
 vec_orange = img_to_vector(orange1)
 
-apple = import_img("apple.png")
+apple = import_img("photos/apple.png")
 apple = resize(apple)
 iio.imwrite("out_apple.png", np.array(apple).astype(np.uint8))
 vec_apple = img_to_vector(apple)
