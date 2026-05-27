@@ -1,6 +1,5 @@
 import math
 import numpy as np
-from numpy.linalg import eigh
 import imageio.v3 as iio
 from PIL import Image, ImageOps
 
@@ -21,29 +20,34 @@ def resize(img):
     return img.resize((64, 64), Image.BILINEAR)
 
 def cosine(vec_1, vec_2):
-    return (np.dot(vec_1, vec_2)) / (np.sqrt(vec_1.dot(vec_1)) * np.sqrt(vec_2.dot(vec_2)))
+    return (np.dot(vec_1, vec_2)) / (np.linalg.norm(vec_1) * np.linalg.norm(vec_2))
+
+
+def normalize(vec):
+    return vec / np.linalg.norm(vec)
+
 
 
 orange = import_img("photos/orange.png")
 orange = resize(orange)
 iio.imwrite("out_orange.png", np.array(orange).astype(np.uint8))
-vec_orange = img_to_vector(orange)
+vec_orange = normalize(img_to_vector(orange))
 
 tangerine = import_img("photos/tangerine.png")
 tangerine = resize(tangerine)
 iio.imwrite("out_tangerine.png", np.array(tangerine).astype(np.uint8))
-vec_tangerine = img_to_vector(tangerine)
+vec_tangerine = normalize(img_to_vector(tangerine))
 
 apple = import_img("photos/apple.png")
 apple = resize(apple)
 iio.imwrite("out_apple.png", np.array(apple).astype(np.uint8))
-vec_apple = img_to_vector(apple)
+vec_apple = normalize(img_to_vector(apple))
 
-print("Cosine of orange and tangerine: ")
-print(cosine(vec_orange, vec_tangerine))
+print("Cosine to tangerine: ")
+print(f"{cosine(vec_orange, vec_tangerine):.4f}")
 
-print("Cosine of orange and apple: ")
-print(cosine(vec_orange, vec_apple))
+print("Cosine to apple: ")
+print(f"{cosine(vec_orange, vec_apple):.4f}")
 
 
 ex_1 = import_img("example_1.png")
@@ -79,9 +83,6 @@ grape = resize(grape)
 iio.imwrite("out_grape.png", np.array(grape).astype(np.uint8))
 vec_grape = img_to_vector(grape)
 
-def normalize(vec):
-    return vec / np.linalg.norm(vec)
-
 images = np.array([
     normalize(vec_tangerine),
     normalize(vec_orange),
@@ -110,3 +111,12 @@ for i in ranked:
 
 ## SVD time
 
+u, e, v_t = np.linalg.svd(images, full_matrices=False)
+images = u[:, :4] * e[:4]
+vec_test = v_t[:4,:] @ vec_test
+output = images @ vec_test
+print("Similarity of Test Image after SVD: ")
+print(output)
+ranked = np.argsort(output)[::-1]
+for i in ranked:
+    print(f"  {labels[i]}: {output[i]:.3f}")
