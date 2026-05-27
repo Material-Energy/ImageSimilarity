@@ -2,6 +2,7 @@ import math
 import numpy as np
 from numpy.linalg import eigh
 import imageio.v3 as iio
+from PIL import Image, ImageOps
 
 def svd(m, dim):
     u, e, v_t = np.linalg.svd(m, full_matrices=False)
@@ -49,26 +50,52 @@ def get_norm_b(svd):
     norm_b = np.linalg.matrix_norm(svd[:,:,2]) / size
     return norm_b
 
-# print(u @ np.diag(e) @ v_t)
+# experimentation with colored images
 
-img_og = iio.imread("orange_og.png")
-img_og_svd = svdColored(img_og, 2)
+# img_og = iio.imread("orange_og.png")
+# img_og_svd = svdColored(img_og, 2)
 
-iio.imwrite("out_og.png", img_og_svd)
+# iio.imwrite("out_og.png", img_og_svd)
 
-img_1 = iio.imread("orange1.png")
-img_1_svd = svdColored(img_1, 2)
+# img_1 = iio.imread("orange1.png")
+# img_1_svd = svdColored(img_1, 2)
 
-iio.imwrite("out_1.png", img_1_svd)
+# iio.imwrite("out_1.png", img_1_svd)
 
-img_apple = iio.imread("apple.png")
-img_apple_svd = svdColored(img_apple, 2)
+# img_apple = iio.imread("apple.png")
+# img_apple_svd = svdColored(img_apple, 2)
 
-iio.imwrite("out_apple.png", img_apple_svd)
+# iio.imwrite("out_apple.png", img_apple_svd)
 
-norm_og = get_norm(img_og_svd)
-norm_img_1 = get_norm(img_1_svd)
-norm_img_apple = get_norm(img_apple)
+# norm_og = get_norm(img_og_svd)
+# norm_img_1 = get_norm(img_1_svd)
+# norm_img_apple = get_norm(img_apple)
 
-print(norm_img_1 - norm_og)
-print(norm_img_apple - norm_og)
+# print(norm_img_1 - norm_og)
+# print(norm_img_apple - norm_og)
+
+
+def import_img(src):
+    img = Image.open(src)
+    return ImageOps.grayscale(img)
+
+def resize(img):
+    return img.resize((64, 64), Image.BILINEAR)
+
+ex_1 = import_img("example_1.png")
+
+r_row = np.array( # 3 x 4
+    [[0.83, 0.17, 0, 0],
+    [0, 0.5, 0.5, 0],
+    [0, 0, 0.17, 0.83]]
+)
+
+r_col = np.array( # 3 x 6
+    [[0.5, 0.5, 0, 0, 0, 0],
+    [0, 0, 0.5, 0.5, 0, 0],
+    [0, 0, 0, 0, 0.5, 0.5]]
+)
+
+out = r_row @ ex_1 @ r_col.T
+
+iio.imwrite("ex_out.png", out.astype(np.uint8))
