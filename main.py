@@ -112,11 +112,27 @@ for i in ranked:
 ## SVD time
 
 u, e, v_t = np.linalg.svd(images, full_matrices=False)
-images = u[:, :4] * e[:4]
-vec_test = v_t[:4,:] @ vec_test
+print("Singular Values:")
+print(e)
+k = 3
+images = u[:, :k] * e[:k]
+vec_test = v_t[:k,:] @ vec_test
 output = images @ vec_test
-print("Similarity of Test Image after SVD: ")
+print(f"Similarity of Test Image after SVD (rank {k}): ")
 print(output)
 ranked = np.argsort(output)[::-1]
 for i in ranked:
     print(f"  {labels[i]}: {output[i]:.3f}")
+
+
+# lsh hashing
+
+np.random.seed(67)
+hyperplanes = np.random.randn(16, 4096)
+
+def lsh(img):
+    return np.sign(hyperplanes @ img).astype(int)
+
+
+vec_test = normalize(img_to_vector(test_image))
+
